@@ -42,15 +42,40 @@ namespace Web.Pages
         {
             if (Upload != null && Upload.Length > 0)
             {
-                var imagesUrl = _options.ApiUrl;
+            // Server-side size check: 10 MB limit
+            const long maxBytes = 10L * 1024 * 1024;
+            if (Upload.Length > maxBytes)
+            {
+                ModelState.AddModelError("Upload", "ไม่ได้นะ ต้องอัพไฟล์ขนาดน้อยกว่า 10 mb");
+                await OnGetAsync(); // repopulate ImageList for the page
+                return Page();
+            }
+            if (!IsImage(Upload))
+            {
+                ModelState.AddModelError("Upload", "The uploaded file must be an image.");
+                await OnGetAsync(); // repopulate ImageList for the page
+                return Page();
+            }
 
-                using (var image = new StreamContent(Upload.OpenReadStream()))
-                {
-                    image.Headers.ContentType = new MediaTypeHeaderValue(Upload.ContentType);
-                    var response = await _httpClient.PostAsync(imagesUrl, image);
-                }
+            var imagesUrl = _options.ApiUrl;
+
+            using (var image = new StreamContent(Upload.OpenReadStream()))
+            {
+                image.Headers.ContentType = new MediaTypeHeaderValue(Upload.ContentType);
+                var response = await _httpClient.PostAsync(imagesUrl, image);
+            }
             }
             return RedirectToPage("/Index");
+        }
+
+        private bool IsImage(Microsoft.AspNetCore.Http.IFormFile file)
+        {
+            if (file == null || file.Length == 0)
+            return false;
+
+            var ext = System.IO.Path.GetExtension(file.FileName ?? string.Empty).ToLowerInvariant();
+            var allowedExt = new HashSet<string> { ".jpg", ".jpeg", ".png", ".gif", ".bmp", ".webp" };
+            return allowedExt.Contains(ext);
         }
     }
 }

@@ -22,8 +22,9 @@
             <div class="card-body">
                 <form method="post" enctype="multipart/form-data">
                     <div class="custom-file">
-                        <input type="file" class="custom-file-input" asp-for="Upload">
-                        <label class="custom-file-label">Choose image</label>
+                        <input id="uploadInput" type="file" class="custom-file-input" asp-for="Upload">
+                        <label id="uploadLabel" class="custom-file-label">Choose image</label>
+                        <div id="uploadError" class="text-danger mt-2" style="display:none">ไม่ได้นะ ต้องอัพไฟล์ขนาดน้อยกว่า 10 mb</div>
                     </div>
                     <button type="submit" class="btn btn-secondary">Upload</button>
                 </form>
@@ -53,5 +54,46 @@
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    <script>
+        (function(){
+            var maxBytes = 10 * 1024 * 1024; // 10 MB
+            var fileInput = document.getElementById('uploadInput');
+            var fileLabel = document.getElementById('uploadLabel');
+            var uploadError = document.getElementById('uploadError');
+            var form = fileInput && fileInput.closest('form');
+
+            function showError(show){
+                uploadError.style.display = show ? 'block' : 'none';
+            }
+
+            if (fileInput) {
+                fileInput.addEventListener('change', function(e){
+                    var f = fileInput.files && fileInput.files[0];
+                    if (f) {
+                        fileLabel.textContent = f.name;
+                        if (f.size > maxBytes) {
+                            showError(true);
+                        } else {
+                            showError(false);
+                        }
+                    } else {
+                        fileLabel.textContent = 'Choose image';
+                        showError(false);
+                    }
+                });
+            }
+
+            if (form) {
+                form.addEventListener('submit', function(evt){
+                    var f = fileInput.files && fileInput.files[0];
+                    if (f && f.size > maxBytes) {
+                        evt.preventDefault();
+                        showError(true);
+                        fileInput.focus();
+                    }
+                });
+            }
+        })();
+    </script>
 </body>
 </html>
