@@ -1,0 +1,59 @@
+# Visual Studio
+.vs/
+.vscode/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Build results
+bin/
+obj/
+Debug/
+Release/
+*.dll
+*.exe
+*.app
+*.pdb
+
+# Publish
+publish/
+out/
+
+# ASP.NET temporary files
+wwwroot/dist/
+
+# Test results
+TestResults/
+*.trx
+
+# NuGet
+*.nupkg
+packages/
+project.lock.json
+project.fragment.lock.json
+*.nuget.props
+
+# Rider
+.idea/
+*.sublime-workspace
+
+# Resharper
+_ReSharper*/
+*.DotSettings.user
+
+# User-specific files
+*.user
+*.rsuser
+*.suo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Secret files (uncomment if you use these patterns and want them ignored)
+#secrets.json
+#appsettings.*.json
